@@ -10,7 +10,12 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 
-
+// User registration routes
+// app.use('/api/users', UserRoutes);
+// app.use('/api', LoginRoutes);
+// app.use('/api/employees', EmployeeRoutes);
+// app.use('/api/contacts', ContactRoutes);
+// MongoDB connection
 if (!process.env.MONGO_URL) {
     console.error('MONGO_URL is not defined in your .env file.');
     process.exit(1);
