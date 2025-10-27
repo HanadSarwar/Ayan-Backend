@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const UserRoutes = require('./routes/UserRoutes');
-
+const UserRoutes = require('./routes/UserRoutes'); // Commented out until we create the routes
+const LoginRoutes = require('./routes/LoginRoutes');
 dotenv.config();
 
 const app = express();
@@ -12,7 +12,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // User registration routes
-app.use('/api/users', UserRoutes);
+app.use('/api/users', UserRoutes);	
+ // Commented out until we create the routes
+ app.use('/api', LoginRoutes);
 
 // MongoDB connection
 if (!process.env.MONGO_URL) {
