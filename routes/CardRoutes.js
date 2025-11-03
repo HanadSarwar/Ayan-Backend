@@ -25,4 +25,32 @@ router.post('/card-post', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+//get Card details
+router.get('/card-get/:id', async (req, res) => {
+    try {
+        const card = await Card.findById(req.params.id); 
+        if (!card) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+        res.json(card);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+// update card details
+router.put('/card-update/:id', async (req, res) => {
+    try {
+        const updatedCard = await Card.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        if (!updatedCard) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+        res.json(updatedCard);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 module.exports = router;
