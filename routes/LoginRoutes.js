@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Login = require('../models/Login');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 router.post('/login',async (req , res ) =>{
     try{
@@ -32,10 +36,14 @@ router.post('/login',async (req , res ) =>{
         loginRecord.status = 'success'
         await loginRecord.save();
 
+        // Sign JWT token
+    const token = jwt.sign({ id: user._id.toString(), email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+
         res.status(200).json({
             message: 'Login Successfully',
             userId: user._id,
-            email: user.email
+            email: user.email,
+            token
         });
     }catch (error){
         return res.status(500).json({ message: 'Server error' ,error: error.message });

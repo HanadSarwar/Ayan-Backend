@@ -2,16 +2,21 @@ const express = require('express');
 const router = express.Router();
 const Card = require('../models/Card');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
 
 
-// Create a new card
-router.post('/card-post', async (req, res) => {
+// Create a new card (protected)
+router.post('/card-post', auth, async (req, res) => {
     try {
-        const { userId, cardNumber, cardHolderName, expiryDate, phonenumber } = req.body;
+        const { cardNumber, cardHolderName, expiryDate, phonenumber } = req.body;
+        const userId = req.user && req.user.id;
+        if (!userId) return res.status(401).json({ message: 'User must be logged in to add a card' });
+
         const user = await User.findById(userId);
         if (!user) {
-             return res.status(404).json({ message: 'User not found' });
-         }
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const newCard = new Card({
             user: userId,
             cardNumber,
@@ -49,6 +54,19 @@ router.put('/card-update/:id', async (req, res) => {
             return res.status(404).json({ message: 'Card not found' });
         }
         res.json(updatedCard);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+//delete card
+router.delete('/card-delete/:id', async (req, res) => {
+    try {
+        const deletedCard = await Card.findByIdAndDelete(req.params.id);
+        if (!deletedCard) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+        res.json({ message: 'Card deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
